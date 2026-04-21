@@ -1,0 +1,11 @@
+fastapi[all]
+uvicorn
+pydantic
+pydantic-settings
+python-multipart
+httpx
+supabase
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+tenacity

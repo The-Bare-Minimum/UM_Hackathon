@@ -1,0 +1,6 @@
+# Agents
+.agents/
+.env
+.venv
+.env.local
+migrations/
