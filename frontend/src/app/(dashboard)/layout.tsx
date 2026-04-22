@@ -26,7 +26,7 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
       <div className="flex flex-1 flex-col">
         <DashboardNavbar businessName={business?.name || 'SME Manager'} />

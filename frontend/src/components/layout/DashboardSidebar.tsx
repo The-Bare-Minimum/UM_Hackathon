@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface SidebarItem {
   title: string;
@@ -55,7 +56,7 @@ export function DashboardSidebar() {
   return (
     <aside
       className={cn(
-        'relative flex flex-col border-r bg-card transition-all duration-300 ease-in-out',
+        'sticky top-0 h-screen flex flex-col border-r bg-card transition-all duration-300 ease-in-out z-20',
         isCollapsed ? 'w-20' : 'w-64'
       )}
     >
@@ -114,8 +115,25 @@ export function DashboardSidebar() {
                 />
                 {!isCollapsed && <span className="font-medium">{item.title}</span>}
                 
-                {isActive && !isCollapsed && (
-                  <div className="ml-auto h-1.5 w-1.5 rounded-full bg-safety-orange animate-pulse" />
+                {!isCollapsed && (
+                  <div className="ml-auto flex items-center gap-2">
+                    {item.group === 'AI Insights' && (
+                      <Badge 
+                        variant="outline" 
+                        className={cn(
+                          "text-[10px] py-0 px-1.5 h-4.5 font-bold tracking-tighter transition-colors",
+                          isActive 
+                            ? "bg-primary-foreground/20 text-primary-foreground border-primary-foreground/40" 
+                            : "bg-safety-orange/10 text-safety-orange border-safety-orange/30"
+                        )}
+                      >
+                        AI
+                      </Badge>
+                    )}
+                    {isActive && (
+                      <div className="h-1.5 w-1.5 rounded-full bg-safety-orange animate-pulse" />
+                    )}
+                  </div>
                 )}
               </Link>
             </React.Fragment>
