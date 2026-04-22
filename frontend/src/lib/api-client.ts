@@ -35,6 +35,13 @@ function extractArrayPayload<T>(payload: unknown): T[] {
   return [];
 }
 
+function extractData<T = unknown>(payload: unknown): T | null {
+  if (payload && typeof payload === 'object' && 'data' in (payload as Record<string, unknown>)) {
+    return (payload as { data: T }).data;
+  }
+  return payload as T;
+}
+
 export async function fetchInventory() {
   const response = await fetch(`${API_BASE_URL}/api/ingredients/`);
   if (!response.ok) {
@@ -220,4 +227,185 @@ export async function fetchAllAIInsightPreviews(businessId: string = 'default') 
     fetchLatestMenuAdvice(businessId).catch(() => ({ data: null })),
   ]);
   return { briefing: briefing?.data, waste: waste?.data, menu: menu?.data };
+}
+
+
+// =========================================================================
+//  Business Rules API
+// =========================================================================
+
+export interface BusinessRule {
+  id: string;
+  rule_text: string;
+  rule_type: 'alert' | 'behavior' | 'constraint';
+  trigger_condition?: string;
+  action?: string;
+  applies_to?: string[];
+  severity: 'info' | 'warning' | 'critical';
+  is_active: boolean;
+  triggered_count: number;
+  created_at: string;
+}
+
+export async function fetchRules(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/rules/${encodeURIComponent(businessId)}`);
+  if (!res.ok) throw new Error('Failed to fetch rules');
+  return res.json();
+}
+
+export async function parseRule(businessId: string = 'default', rawText: string) {
+  const res = await fetch(`${API_BASE_URL}/api/rules/${encodeURIComponent(businessId)}/parse`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ raw_text: rawText }),
+  });
+  if (!res.ok) throw new Error('Failed to parse rule');
+  return res.json();
+}
+
+export async function createRule(businessId: string = 'default', rule: Partial<BusinessRule>) {
+  const res = await fetch(`${API_BASE_URL}/api/rules/${encodeURIComponent(businessId)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(rule),
+  });
+  if (!res.ok) throw new Error('Failed to create rule');
+  return res.json();
+}
+
+export async function deleteRule(businessId: string = 'default', ruleId: string) {
+  const res = await fetch(`${API_BASE_URL}/api/rules/${encodeURIComponent(businessId)}/${ruleId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete rule');
+  return res.json();
+}
+
+export async function toggleRule(businessId: string = 'default', ruleId: string, isActive: boolean) {
+  const res = await fetch(`${API_BASE_URL}/api/rules/${encodeURIComponent(businessId)}/${ruleId}/toggle`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ is_active: isActive }),
+  });
+  if (!res.ok) throw new Error('Failed to toggle rule');
+  return res.json();
+}
+
+
+// =========================================================================
+//  AI Skills API
+// =========================================================================
+
+export interface AISkill {
+  id: string;
+  skill_name: string;
+  description: string;
+  category: string;
+  is_enabled: boolean;
+  last_used: string | null;
+}
+
+export async function fetchSkills(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/skills/${encodeURIComponent(businessId)}`);
+  if (!res.ok) throw new Error('Failed to fetch skills');
+  return res.json();
+}
+
+export async function toggleSkill(businessId: string = 'default', skillName: string, enabled: boolean) {
+  const res = await fetch(`${API_BASE_URL}/api/skills/${encodeURIComponent(businessId)}/${encodeURIComponent(skillName)}/toggle`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled }),
+  });
+  if (!res.ok) throw new Error('Failed to toggle skill');
+  return res.json();
+}
+
+export async function fetchEnabledSkills(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/skills/${encodeURIComponent(businessId)}/enabled`);
+  if (!res.ok) throw new Error('Failed to fetch enabled skills');
+  return res.json();
+}
+
+
+// =========================================================================
+//  Assets API
+// =========================================================================
+
+export interface Asset {
+  id: string;
+  name: string;
+  asset_type: 'machine' | 'subscription' | 'license';
+  purchase_date?: string;
+  last_maintenance?: string;
+  next_maintenance?: string;
+  renewal_date?: string;
+  cost_per_renewal: number;
+  status: string;
+  computed_status: string;
+  notes?: string;
+  created_at: string;
+}
+
+export async function fetchAssets(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/assets/${encodeURIComponent(businessId)}`);
+  if (!res.ok) throw new Error('Failed to fetch assets');
+  return res.json();
+}
+
+export async function createAsset(businessId: string = 'default', asset: Partial<Asset>) {
+  const res = await fetch(`${API_BASE_URL}/api/assets/${encodeURIComponent(businessId)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(asset),
+  });
+  if (!res.ok) throw new Error('Failed to create asset');
+  return res.json();
+}
+
+export async function deleteAsset(businessId: string = 'default', assetId: string) {
+  const res = await fetch(`${API_BASE_URL}/api/assets/${encodeURIComponent(businessId)}/${assetId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete asset');
+  return res.json();
+}
+
+export async function markAssetServiced(businessId: string = 'default', assetId: string) {
+  const res = await fetch(`${API_BASE_URL}/api/assets/${encodeURIComponent(businessId)}/${assetId}/service`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error('Failed to mark serviced');
+  return res.json();
+}
+
+export async function analyzeAssets(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/assets/${encodeURIComponent(businessId)}/analyze`, {
+    method: 'POST',
+  });
+  if (!res.ok) throw new Error('Failed to analyze assets');
+  return res.json();
+}
+
+export async function fetchMonthlyCost(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/assets/${encodeURIComponent(businessId)}/monthly-cost`);
+  if (!res.ok) throw new Error('Failed to fetch monthly cost');
+  return res.json();
+}
+
+
+// =========================================================================
+//  Dashboard Health Score & AI Status
+// =========================================================================
+
+export async function fetchHealthScore(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/ai/health-score/${encodeURIComponent(businessId)}`);
+  if (!res.ok) throw new Error('Failed to fetch health score');
+  return res.json();
+}
+
+export async function fetchTriggeredRules(businessId: string = 'default') {
+  const res = await fetch(`${API_BASE_URL}/api/ai/triggered-rules/${encodeURIComponent(businessId)}`);
+  if (!res.ok) throw new Error('Failed to fetch triggered rules');
+  return res.json();
 }

@@ -341,7 +341,7 @@ function IngredientFormDialog() {
       if (success) toast.success(`"${form.name}" updated successfully`);
       else toast.error('Failed to update ingredient');
     } else {
-      success = await createIngredient(apiPayload as IngredientFormData);
+      success = await createIngredient(apiPayload as unknown as IngredientFormData);
       if (success) toast.success(`"${form.name}" added to inventory`);
       else toast.error('Failed to add ingredient');
     }

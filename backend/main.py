@@ -7,7 +7,10 @@ from routers import (
     machines, 
     subscriptions, 
     menu_items, 
-    ai
+    ai,
+    rules,
+    skills,
+    assets,
 )
 
 app = FastAPI(
@@ -38,6 +41,9 @@ app.include_router(machines.router, prefix="/api")
 app.include_router(subscriptions.router, prefix="/api")
 app.include_router(menu_items.router, prefix="/api")
 app.include_router(ai.router, prefix="/api")
+app.include_router(rules.router, prefix="/api")
+app.include_router(skills.router, prefix="/api")
+app.include_router(assets.router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn

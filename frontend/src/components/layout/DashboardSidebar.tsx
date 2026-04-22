@@ -9,7 +9,6 @@ import {
   Receipt,
   Users,
   Wrench,
-  Package,
   Utensils,
   Brain,
   Settings,
@@ -17,6 +16,8 @@ import {
   ChevronRight,
   Trash2,
   ChefHat,
+  Scale,
+  Cpu,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,14 +34,15 @@ const sidebarItems: SidebarItem[] = [
   { title: 'Ingredients', href: '/ingredients', icon: Carrot },
   { title: 'Budget & Expenses', href: '/expenses', icon: Receipt },
   { title: 'Staff & Salary', href: '/staff', icon: Users },
-  { title: 'Machines & Tools', href: '/tools', icon: Wrench },
-  { title: 'Subscriptions', href: '/subscriptions', icon: Package },
+  { title: 'Assets', href: '/assets', icon: Wrench },
   { title: 'Menu Items', href: '/menu-items', icon: Utensils },
   // AI Features group
   { title: 'AI Briefing', href: '/ai-briefing', icon: Brain, group: 'AI Insights' },
   { title: 'Waste Prediction', href: '/waste-prediction', icon: Trash2, group: 'AI Insights' },
   { title: 'Menu Advisor', href: '/menu-advisor', icon: ChefHat, group: 'AI Insights' },
-  { title: 'Settings', href: '/settings', icon: Settings },
+  // Customization group
+  { title: 'Business Rules', href: '/rules', icon: Scale, group: 'Customization' },
+  { title: 'AI Skills', href: '/skills', icon: Cpu, group: 'Customization' },
 ];
 
 export function DashboardSidebar() {
@@ -126,7 +128,7 @@ export function DashboardSidebar() {
           <div className="rounded-xl border border-safety-orange/20 bg-safety-orange/5 p-4">
             <p className="text-xs font-bold text-safety-orange uppercase tracking-widest mb-1">AI Status</p>
             <p className="text-[10px] text-muted-foreground leading-tight">
-              Z.AI GLM operational. 3 AI features active.
+              Z.AI GLM operational. Rules & Skills active.
             </p>
           </div>
         ) : (

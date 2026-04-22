@@ -564,7 +564,8 @@ function SpendingChart({ loading }: { loading: boolean }) {
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [formatCurrency(value), undefined]}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              formatter={(value: any) => [formatCurrency(Number(value ?? 0)), undefined]}
             />
             <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '12px' }} />
             {categories.map((cat, i) => (
